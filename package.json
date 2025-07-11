@@ -1,0 +1,17 @@
+{
+  "name": "readify",
+  "version": "0.0.1",
+  "description": "",
+  "main": "readify",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "jsdom": "^26.1.0"
+  }
+}

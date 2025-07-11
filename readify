@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+import fs from 'fs';
+import { JSDOM } from 'jsdom';
+import { Readability } from '@mozilla/readability';
+
+const path = process.argv[2];
+
+const dom = new JSDOM(fs.readFileSync(path, 'utf-8'));
+const reader = new Readability(dom.window.document);
+const article = reader.parse();
+
+fs.writeFileSync("output.html", article.content);
+console.log("✅ Saved cleaned article to output.html");
