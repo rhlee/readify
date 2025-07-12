@@ -17,14 +17,14 @@ import {fileTypeFromFile} from 'file-type';
   const model = new JSDOM();
   const document = model.window.document;
   document.querySelector('body').innerHTML = article.content;
-  await Promise.all(
-    Array.from(document.querySelectorAll('img')).map(async image => {
-      const pathImage = path.resolve(directory, image.src);
+  for (const image of document.querySelectorAll('img')) {
+    try {
+      const pathImage = path.resolve(directory, decodeURIComponent(image.src));
       const data = fs.readFileSync(pathImage);
       image.src
         = `data:${(await fileTypeFromFile(pathImage)).mime};`
         + `base64,${data.toString('base64')}`;
-    })
-  );
+    } catch (error) { console.error(error); }
+  }
   fs.writeFileSync(article.title + ".html", model.serialize());
 })();
