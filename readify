@@ -6,6 +6,7 @@ import path from 'path';
 import {JSDOM} from 'jsdom';
 import {Readability} from '@mozilla/readability';
 import {fileTypeFromFile} from 'file-type';
+import sharp from 'sharp';
 
 
 (async () => {
@@ -21,9 +22,11 @@ import {fileTypeFromFile} from 'file-type';
     try {
       const pathImage = path.resolve(directory, decodeURIComponent(image.src));
       const data = fs.readFileSync(pathImage);
-      image.src
-        = `data:${(await fileTypeFromFile(pathImage)).mime};`
-        + `base64,${data.toString('base64')}`;
+      const mime = (await fileTypeFromFile(pathImage)).mime;
+      image.src = mime === "image/avif" ?
+        "data:image/png;base64,"
+          + (await sharp(data).png().toBuffer()).toString('base64')
+        : `data:${mime};base64,${data.toString('base64')}`;
     } catch (error) { console.error(error); }
   }
   fs.writeFileSync(article.title + ".html", model.serialize());
