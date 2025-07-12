@@ -1,14 +1,30 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import { JSDOM } from 'jsdom';
-import { Readability } from '@mozilla/readability';
+import path from 'path';
 
-const path = process.argv[2];
+import {JSDOM} from 'jsdom';
+import {Readability} from '@mozilla/readability';
+import {fileTypeFromFile} from 'file-type';
 
-const dom = new JSDOM(fs.readFileSync(path, 'utf-8'));
-const reader = new Readability(dom.window.document);
-const article = reader.parse();
 
-fs.writeFileSync("output.html", article.content);
-console.log("✅ Saved cleaned article to output.html");
+(async () => {
+  const pathHTML = process.argv[2];
+  const directory = path.dirname(pathHTML);
+  const reader = new Readability
+    (new JSDOM(fs.readFileSync(pathHTML, 'utf-8')).window.document);
+  const article = reader.parse();
+  const model = new JSDOM();
+  const document = model.window.document;
+  document.querySelector('body').innerHTML = article.content;
+  await Promise.all(
+    Array.from(document.querySelectorAll('img')).map(async image => {
+      const pathImage = path.resolve(directory, image.src);
+      const data = fs.readFileSync(pathImage);
+      image.src
+        = `data:${(await fileTypeFromFile(pathImage)).mime};`
+        + `base64,${data.toString('base64')}`;
+    })
+  );
+  fs.writeFileSync(article.title + ".html", model.serialize());
+})();
