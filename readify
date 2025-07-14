@@ -29,5 +29,7 @@ import sharp from 'sharp';
         : `data:${mime};base64,${data.toString('base64')}`;
     } catch (error) { console.error(error); }
   }
+  document.querySelectorAll("source")
+    .forEach(source => source.removeAttribute('srcset'));
   fs.writeFileSync(article.title + ".html", model.serialize());
 })();
