@@ -18,7 +18,7 @@ import sharp from 'sharp';
   const model = new JSDOM();
   const document = model.window.document;
   document.querySelector('body').innerHTML = article.content;
-  for (const image of document.querySelectorAll('img')) {
+  for (const image of document.querySelectorAll("img")) {
     if (!image.src.startsWith("data:")) try {
       const pathImage = path.resolve(directory, decodeURIComponent(image.src));
       const data = fs.readFileSync(pathImage);
