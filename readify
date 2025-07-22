@@ -31,5 +31,5 @@ import sharp from 'sharp';
   }
   document.querySelectorAll("source")
     .forEach(source => source.removeAttribute('srcset'));
-  fs.writeFileSync(article.title + ".html", model.serialize());
+  fs.writeFileSync(path.basename(pathHTML), model.serialize());
 })();
